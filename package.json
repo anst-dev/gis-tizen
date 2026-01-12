@@ -1,15 +1,23 @@
 {
   "name": "gis-tizen",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/qs": "^6.14.0",
+    "typescript": "^5.7.2",
     "vite": "^7.1.11"
   },
   "dependencies": {
-    "ol": "latest"
+    "axios": "^1.7.9",
+    "ol": "latest",
+    "qs": "^6.14.0"
   }
 }
