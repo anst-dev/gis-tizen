@@ -14,8 +14,8 @@ import { duongOngStyleFunction } from './service/styleService.js';
 // Cấu hình bản đồ
 const CONFIG = {
   DEFAULT_CENTER: [105.695587, 18.671575], // Tọa độ Nghệ An, Việt Nam
-  DEFAULT_ZOOM: 10,
-  FULLSCREEN_ZOOM: 10,
+  DEFAULT_ZOOM: 12,
+  FULLSCREEN_ZOOM: 12,
   MIN_ZOOM: 4,
   MAX_ZOOM: 18,
   WIDGET_ZOOM: 14,
@@ -78,6 +78,25 @@ async function loadDuongOngChinh() {
 
 // Load dữ liệu khi khởi động
 loadDuongOngChinh();
+
+// Xử lý toggle legend (thu gọn/mở rộng bảng chú thích)
+function initLegendToggle() {
+  const legendToggleBtn = document.getElementById('legend-toggle');
+  const legendContent = document.getElementById('legend-content');
+  const legend = document.getElementById('legend');
+
+  if (legendToggleBtn && legendContent && legend) {
+    legendToggleBtn.addEventListener('click', () => {
+      const isCollapsed = legendContent.classList.toggle('collapsed');
+      legend.classList.toggle('collapsed', isCollapsed);
+      legendToggleBtn.textContent = isCollapsed ? '+' : '−';
+      legendToggleBtn.title = isCollapsed ? 'Mở rộng' : 'Thu gọn';
+    });
+  }
+}
+
+// Khởi tạo legend toggle khi DOM sẵn sàng
+document.addEventListener('DOMContentLoaded', initLegendToggle);
 
 // Export config để sử dụng ở nơi khác nếu cần
 export { CONFIG, map, duongOngLayer };

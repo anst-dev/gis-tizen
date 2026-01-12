@@ -1,13 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Using OpenLayers with Vite</title>
+    <title>GIS Nawasco - Bản đồ đường ống</title>
   </head>
   <body>
     <div id="map"></div>
+    
+    <!-- Bảng chú thích màu sắc đường ống -->
+    <div id="legend" class="legend">
+      <div class="legend-header">
+        <h3>Chú thích đường ống</h3>
+        <button id="legend-toggle" class="legend-toggle-btn" title="Thu gọn">−</button>
+      </div>
+      <div id="legend-content" class="legend-content">
+        <div class="legend-section">
+          <h4>Theo vật liệu</h4>
+          <div class="legend-item">
+            <span class="legend-line" style="background-color: #FF0000;"></span>
+            <span class="legend-label">Thép</span>
+          </div>
+        </div>
+        
+        <div class="legend-section">
+          <h4>HDPE theo đường kính</h4>
+          <div class="legend-item">
+            <span class="legend-line" style="background-color: #00FF00;"></span>
+            <span class="legend-label">HDPE Ø110mm</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-line" style="background-color: #00FFFF;"></span>
+            <span class="legend-label">HDPE Ø90mm</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-line" style="background-color: #0000FF;"></span>
+            <span class="legend-label">HDPE Ø63mm</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-line" style="background-color: #F56A80;"></span>
+            <span class="legend-label">HDPE Ø50mm</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-line" style="background-color: #FFFF00;"></span>
+            <span class="legend-label">HDPE &lt; Ø50mm</span>
+          </div>
+        </div>
+        
+        <div class="legend-section">
+          <h4>Theo đường kính (tất cả vật liệu)</h4>
+          <div class="legend-item">
+            <span class="legend-line legend-line-thick" style="background-color: #FFA500;"></span>
+            <span class="legend-label">&gt; Ø250mm</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-line legend-line-medium" style="background-color: #800080;"></span>
+            <span class="legend-label">Ø150mm - Ø250mm</span>
+          </div>
+        </div>
+        
+        <div class="legend-section">
+          <h4>Khác</h4>
+          <div class="legend-item">
+            <span class="legend-line" style="background-color: #8B4513;"></span>
+            <span class="legend-label">Trường hợp còn lại</span>
+          </div>
+        </div>
+        
+        <div class="legend-note">
+          <small>* Chỉ hiển thị đường ống từ Ø90mm trở lên</small>
+        </div>
+      </div>
+    </div>
+    
     <script type="module" src="./main.js"></script>
   </body>
 </html>
