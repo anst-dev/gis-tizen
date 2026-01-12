@@ -11,7 +11,190 @@ html, body {
   width: 100%;
 }
 
-/* Legend - Bảng chú thích */
+/* ===========================================
+   INFO TOOLTIP - Hiển thị thông tin khi hover
+   =========================================== */
+.info-tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  pointer-events: none;
+  z-index: 1001;
+  visibility: hidden;
+  white-space: nowrap;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===========================================
+   LAYER SWITCHER - Bật/tắt các layer
+   =========================================== */
+.layer-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  z-index: 1000;
+  min-width: 180px;
+  max-width: 250px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.layer-switcher-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.layer-switcher-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+.layer-switcher-toggle-btn {
+  background: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.layer-switcher-toggle-btn:hover {
+  background: #e0e0e0;
+}
+
+.layer-switcher-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  max-height: 300px;
+  opacity: 1;
+}
+
+.layer-switcher-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.layer-switcher.collapsed {
+  min-width: auto;
+}
+
+.layer-switcher.collapsed .layer-switcher-header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.layer-group {
+  margin-bottom: 8px;
+}
+
+.layer-group:last-child {
+  margin-bottom: 0;
+}
+
+.layer-group h4 {
+  margin: 0 0 6px 0;
+  font-size: 11px;
+  color: #888;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-left: 28px;
+}
+
+.layer-item input[type="checkbox"] {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.layer-item .checkmark {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 18px;
+  width: 18px;
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.layer-item:hover .checkmark {
+  border-color: #2196F3;
+}
+
+.layer-item input:checked ~ .checkmark {
+  background-color: #2196F3;
+  border-color: #2196F3;
+}
+
+.layer-item .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.layer-item input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.layer-item .layer-name {
+  color: #444;
+  font-size: 12px;
+}
+
+.layer-item:hover .layer-name {
+  color: #2196F3;
+}
+
+/* ===========================================
+   LEGEND - Bảng chú thích
+   =========================================== */
 .legend {
   position: absolute;
   bottom: 20px;
@@ -67,7 +250,7 @@ html, body {
 .legend-content {
   overflow: hidden;
   transition: max-height 0.3s ease, opacity 0.3s ease;
-  max-height: 500px;
+  max-height: 600px;
   opacity: 1;
 }
 
@@ -142,8 +325,87 @@ html, body {
   font-style: italic;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
+/* Legend Info Section - Quy tắc hiển thị */
+.legend-section-info {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 10px;
+}
+
+.legend-section-info h4 {
+  color: #555;
+}
+
+.legend-info-text {
+  font-size: 10px;
+  line-height: 1.4;
+  color: #666;
+}
+
+.legend-info-text p {
+  margin: 2px 0;
+}
+
+/* ===========================================
+   LOADING OVERLAY
+   =========================================== */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2196F3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Map loading state */
+#map.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2196F3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 1000;
+}
+
+/* ===========================================
+   RESPONSIVE
+   =========================================== */
+@media (max-width: 768px) {
+  .layer-switcher {
+    top: 10px;
+    right: 10px;
+    max-width: 200px;
+    padding: 10px;
+  }
+
   .legend {
     left: 10px;
     bottom: 10px;
@@ -151,16 +413,60 @@ html, body {
     padding: 10px;
     font-size: 12px;
   }
+}
+
+@media (max-width: 480px) {
+  .layer-switcher {
+    top: 10px;
+    right: 10px;
+    max-width: 180px;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .layer-switcher-header h3 {
+    font-size: 12px;
+  }
+
+  .legend {
+    left: 10px;
+    bottom: 10px;
+    max-width: 200px;
+    padding: 8px;
+    font-size: 11px;
+  }
   
   .legend-header h3 {
-    font-size: 13px;
+    font-size: 12px;
   }
   
   .legend-section h4 {
-    font-size: 11px;
+    font-size: 10px;
   }
   
   .legend-label {
-    font-size: 11px;
+    font-size: 10px;
+  }
+
+  .legend-section-info {
+    display: none;
+  }
+}
+
+/* ===========================================
+   PRINT STYLES
+   =========================================== */
+@media print {
+  .layer-switcher,
+  .legend-toggle-btn,
+  .layer-switcher-toggle-btn {
+    display: none;
+  }
+
+  .legend {
+    position: static;
+    box-shadow: none;
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
   }
 }
