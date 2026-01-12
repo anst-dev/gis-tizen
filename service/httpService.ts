@@ -11,7 +11,7 @@ import axios, {
 } from 'axios';
 import qs from 'qs';
 
-const API_BASE_URL = 'http://118.70.151.182:1223';
+const API_BASE_URL = 'https://unsupercilious-leonarda-unreaving.ngrok-free.dev';
 
 const http: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -19,7 +19,8 @@ const http: AxiosInstance = axios.create({
   headers: {
     'accept': '*/*',
     'accept-language': 'vi,en-US;q=0.9,en-GB;q=0.8,en;q=0.7',
-    'Referer': 'http://gis.nawasco.com.vn/'
+    'ngrok-skip-browser-warning': 'true'
+    // Note: 'Referer' header cannot be set in browser (forbidden header name)
   },
   paramsSerializer: (params: Record<string, unknown>) => qs.stringify(params, { encode: false })
 });
