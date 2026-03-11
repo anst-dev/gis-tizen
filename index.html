@@ -19,6 +19,40 @@
         <button id="legend-toggle" class="legend-toggle-btn" title="Thu gọn">−</button>
       </div>
       <div id="legend-content" class="legend-content">
+        <!-- Section: Trạng thái Điểm chảy -->
+        <div class="legend-section">
+          <h4>Trạng thái Điểm chảy</h4>
+          <div class="legend-item">
+            <span class="legend-circle" style="background-color: #FF0000; border: 2px solid #fff;"></span>
+            <span class="legend-label">Chờ khảo sát (Đỏ)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-circle" style="background-color: #FFA500; border: 2px solid #fff;"></span>
+            <span class="legend-label">Đang thi công (Cam)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-circle" style="background-color: #00FF00; border: 2px solid #fff;"></span>
+            <span class="legend-label">Đã hoàn thành (Xanh)</span>
+          </div>
+          <div class="legend-item legend-checkbox-item">
+            <input type="checkbox" id="layer-diemchay" checked />
+            <label for="layer-diemchay">Hiển thị lớp Điểm chảy</label>
+          </div>
+        </div>
+
+        <!-- Section: Tín hiệu SCADA (Loggers) -->
+        <div class="legend-section">
+          <h4>Tín hiệu SCADA (Loggers)</h4>
+          <div class="legend-item">
+            <span class="legend-circle" style="background-color: #1565C0; border: 2px solid #fff;"></span>
+            <span class="legend-label">Site (Áp lực / Lưu lượng)</span>
+          </div>
+          <div class="legend-item legend-checkbox-item">
+            <input type="checkbox" id="layer-viewloggers" checked />
+            <label for="layer-viewloggers">Hiển thị tín hiệu SCADA</label>
+          </div>
+        </div>
+
         <!-- Section: Theo vật liệu -->
         <div class="legend-section">
           <h4>Theo vật liệu</h4>

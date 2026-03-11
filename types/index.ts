@@ -34,6 +34,8 @@ export interface LayerNames {
   DONG_HO_KHACH_HANG: string;
   VAN: string;
   DMA: string;
+  DIEM_CHAY: string;
+  VIEW_LOGGERS: string;
 }
 
 /**
@@ -53,6 +55,8 @@ export interface LayerDisplayConfig {
   DUONG_ONG_CHINH_C3: LayerDisplayConfigItem;
   DUONG_ONG_NGHIEM_THU: LayerDisplayConfigItem;
   DUONG_ONG_OVERLAY: LayerDisplayConfigItem;
+  DIEM_CHAY: LayerDisplayConfigItem;
+  VIEW_LOGGERS: LayerDisplayConfigItem;
 }
 
 /**
@@ -110,6 +114,32 @@ export interface DuongOngProperties {
   TenVatTu?: string;
   NoiDung?: string;
 }
+
+/**
+ * GeoJSON Feature properties cho Điểm chảy (ViewGiaoKhoans)
+ */
+export interface DiemChayProperties {
+  Id?: number;
+  DiaDiem?: string;
+  HoTenNhanVienKyThuat?: string;
+  HoTenNhanVienThiCong?: string;
+  ThoiGianThiCongTuNgay?: string;
+  ThoiGianHoanThanh?: string;
+  TrangThaiXuLy?: string;
+}
+
+/**
+ * GeoJSON Feature properties cho điểm SCADA Logger (ViewLoggers)
+ */
+export interface LoggerProperties {
+  SiteName?: string;
+  ApLuc?: number | null;
+  ApLucUnit?: string | null;
+  LuuLuong?: number | null;
+  LuuLuongUnit?: string | null;
+  TimeStamp?: string | null;
+}
+
 
 /**
  * GeoJSON Feature

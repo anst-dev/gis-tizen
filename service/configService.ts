@@ -50,7 +50,9 @@ export const LAYER_NAMES: Readonly<LayerNames> = {
   DUONG_ONG_OVERLAY: 'DuongOngChinhOverlays',
   DONG_HO_KHACH_HANG: 'ViewDongHoKhachHangs',
   VAN: 'ViewVans',
-  DMA: 'ViewDMAs'
+  DMA: 'ViewDMAs',
+  DIEM_CHAY: 'ViewGiaoKhoans',
+  VIEW_LOGGERS: 'ViewLoggers'
 } as const;
 
 /**
@@ -76,6 +78,16 @@ export const LAYER_DISPLAY_CONFIG: Readonly<LayerDisplayConfig> = {
     title: 'Bản đồ đường ống kết nối',
     visible: false,  // Mặc định ẩn
     zIndex: 2000
+  },
+  DIEM_CHAY: {
+    title: 'Điểm chảy trên tuyến ống',
+    visible: true,
+    zIndex: 3000 // Cao nhất để đè lên đường ống
+  },
+  VIEW_LOGGERS: {
+    title: 'Tín hiệu áp lực SCADA',
+    visible: true,
+    zIndex: 3001 // Cao nhất, trên cả điểm chảy
   }
 } as const;
 
@@ -99,7 +111,7 @@ export const PIPE_COLORS: Readonly<PipeColors> = {
  */
 export const MAP_CONFIG: Readonly<MapConfig> = {
   DEFAULT_CENTER: [105.695587, 18.671575], // Tọa độ Nghệ An, Việt Nam
-  DEFAULT_ZOOM: 12,
+  DEFAULT_ZOOM: 13,
   MIN_ZOOM: 4,
   MAX_ZOOM: 18,
   PROJECTION: 'EPSG:3857'

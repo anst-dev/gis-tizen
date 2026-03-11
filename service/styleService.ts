@@ -4,15 +4,15 @@
  * Pattern giống với lib/utils.js trong nawasco-web-gis
  */
 
-import { Style, Stroke, Text } from 'ol/style';
+import { Style, Stroke, Text, Fill, Circle } from 'ol/style';
 import type { FeatureLike } from 'ol/Feature';
 import type { StyleFunction } from 'ol/style/Style';
 import { 
+  PIPE_COLORS,
   RESOLUTION_DISPLAY_NAME_PIPELINE, 
-  NUMBER_SCALE_RESOLUTION,
-  PIPE_COLORS 
+  NUMBER_SCALE_RESOLUTION
 } from './configService.ts';
-import type { Colors, MaLoaiVatLieu } from '../types/index.ts';
+import type { DiemChayProperties, LoggerProperties, Colors, MaLoaiVatLieu } from '../types/index.ts';
 
 /**
  * Định nghĩa màu sắc - giữ backward compatibility
@@ -260,3 +260,91 @@ const styleService = {
 };
 
 export default styleService;
+/**
+ * Tạo style cho điểm SCADA Logger (ViewLoggers)
+ * Sử dụng màu sáng (nền trắng/xanh nhạt) khác với điểm chảy (nền tối)
+ */
+export const viewLoggersStyleFunction = (feature: FeatureLike): Style => {
+  const props = feature.getProperties() as LoggerProperties;
+  const siteName = props.SiteName ?? '';
+  const apUnit = props.ApLucUnit ?? 'bar';
+  const llUnit = props.LuuLuongUnit ?? 'm³/h';
+  const apLuc = props.ApLuc != null ? `Áp lực: ${props.ApLuc.toFixed(2)} ${apUnit}` : 'Áp lực: N/A';
+  const luuLuong = props.LuuLuong != null ? `Lưu lượng: ${props.LuuLuong.toFixed(2)} ${llUnit}` : '';
+  const date = props.TimeStamp ? new Date(props.TimeStamp) : null;
+  const timeStr = date ? `🕒 ${date.toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit'})} ${date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}` : '';
+
+  const lines = [siteName, apLuc, luuLuong, timeStr].filter(Boolean);
+  const labelText = lines.join('\n');
+
+  return new Style({
+    image: new Circle({
+      radius: 9,
+      fill: new Fill({ color: '#1565C0' }),       // Xanh dương đậm - icon nổi bật trên nền sáng
+      stroke: new Stroke({ color: '#FFFFFF', width: 2.5 }) // Viền trắng
+    }),
+    text: new Text({
+      text: labelText,
+      font: 'bold 11px Arial, sans-serif',
+      fill: new Fill({ color: '#1A237E' }),                // Chữ xanh đậm
+      backgroundFill: new Fill({ color: 'rgba(255, 255, 255, 0.92)' }), // Nền trắng sáng
+      stroke: new Stroke({ color: 'rgba(21,101,192,0.4)', width: 1 }), // Viền xanh nhạt
+      padding: [4, 6, 4, 6],
+      textAlign: 'left',
+      offsetX: 14,
+      offsetY: 0
+    })
+  });
+};
+
+export const configStyleDiemChay = (feature: FeatureLike): Style => {
+    const properties = feature.getProperties() as DiemChayProperties;
+    const trangThai = properties.TrangThaiXuLy;
+
+    let color = PIPE_COLORS.THEP; // Mặc định: Chờ khảo sát (Đỏ)
+    if (trangThai === 'Đang thi công') {
+        color = PIPE_COLORS.DIAMETER_GT_250; // Màu Cam
+    } else if (trangThai === 'Đã hoàn thành') {
+        color = PIPE_COLORS.HDPE_110; // Màu Xanh lá
+    }
+
+    const diaDiem = properties.DiaDiem ?? 'Không xác định';
+    const nvKT = properties.HoTenNhanVienKyThuat ?? '...';
+    const nvTC = properties.HoTenNhanVienThiCong ?? '...';
+    const thoiGianHoanThanh = properties.ThoiGianHoanThanh ?? '';
+
+    let textLines = [];
+    textLines.push(`📍 ${diaDiem}`);
+    textLines.push(`👤 KS: ${nvKT} | TC: ${nvTC}`);
+    textLines.push(`📊 Trạng thái: ${trangThai || '...'}`);
+    if (thoiGianHoanThanh) {
+       textLines.push(`🕒 Hoàn thành: ${new Date(thoiGianHoanThanh).toLocaleDateString('vi-VN')}`);
+    }
+    const labelText = textLines.join('\n');
+
+    return new Style({
+        image: new Circle({
+            radius: 8,
+            fill: new Fill({ color: color }),
+            stroke: new Stroke({ color: '#fff', width: 2 })
+        }),
+        text: new Text({
+            text: labelText,
+            font: '12px Arial, sans-serif',
+            fill: new Fill({ color: '#fff' }),
+            backgroundFill: new Fill({ color: 'rgba(0, 0, 0, 0.7)' }),
+            padding: [5, 5, 5, 5],
+            textAlign: 'left',
+            offsetX: 15,
+            offsetY: 0,
+            stroke: new Stroke({ color: '#000', width: 1 }) // Viền đen mỏng cho chữ dễ đọc
+        })
+    });
+};
+
+/**
+ * Style function cho layer Điểm Chảy
+ */
+export const diemChayStyleFunction = (feature: FeatureLike): Style | Style[] => {
+    return [configStyleDiemChay(feature)];
+};

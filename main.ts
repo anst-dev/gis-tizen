@@ -17,11 +17,13 @@ import type { Geometry } from 'ol/geom';
 import type BaseLayer from 'ol/layer/Base';
 
 // Import services
-import geoService from './service/geoService.ts';
+import geoService, { getDiemChay } from './service/geoService.ts';
 import { 
   duongOngChinhStyleFunction, 
   duongOngNghiemThuStyleFunction,
-  duongOngOverlayStyleFunction 
+  duongOngOverlayStyleFunction,
+  diemChayStyleFunction,
+  viewLoggersStyleFunction
 } from './service/styleService.ts';
 import { MAP_CONFIG, LAYER_DISPLAY_CONFIG } from './service/configService.ts';
 import type { GeoJSONFeatureCollection, DuongOngProperties, AppConfig, FeatureWithLayer } from './types/index.ts';
@@ -49,6 +51,8 @@ const duongOngChinhSource = new VectorSource<Feature<Geometry>>();
 const duongOngChinhC3Source = new VectorSource<Feature<Geometry>>();
 const duongOngNghiemThuSource = new VectorSource<Feature<Geometry>>();
 const duongOngOverlaySource = new VectorSource<Feature<Geometry>>();
+const diemChaySource = new VectorSource<Feature<Geometry>>();
+const viewLoggersSource = new VectorSource<Feature<Geometry>>();
 
 // ============================================
 // TẠO VECTOR LAYERS
@@ -120,6 +124,33 @@ const duongOngOverlayLayer = new VectorLayer({
   zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_OVERLAY.zIndex
 });
 
+/**
+ * Layer điểm chảy
+ */
+const diemChayLayer = new VectorLayer({
+  source: diemChaySource,
+  style: diemChayStyleFunction,
+  properties: {
+    title: LAYER_DISPLAY_CONFIG.DIEM_CHAY.title
+  },
+  visible: LAYER_DISPLAY_CONFIG.DIEM_CHAY.visible,
+  zIndex: LAYER_DISPLAY_CONFIG.DIEM_CHAY.zIndex
+});
+
+/**
+ * Layer tín hiệu áp lực / lưu lượng SCADA (ViewLoggers)
+ * Hiển thị icon tròn xanh dương + label nền trắng (màu sáng)
+ */
+const viewLoggersLayer = new VectorLayer({
+  source: viewLoggersSource,
+  style: viewLoggersStyleFunction,
+  properties: {
+    title: LAYER_DISPLAY_CONFIG.VIEW_LOGGERS.title
+  },
+  visible: LAYER_DISPLAY_CONFIG.VIEW_LOGGERS.visible,
+  zIndex: LAYER_DISPLAY_CONFIG.VIEW_LOGGERS.zIndex
+});
+
 // ============================================
 // TẠO LAYER GROUPS
 // ============================================
@@ -139,7 +170,9 @@ const overlayLayers = new LayerGroup({
   properties: { title: 'Lớp đường ống' },
   layers: [
     duongOngChinhLayer,
-    duongOngChinhC3Layer
+    duongOngChinhC3Layer,
+    diemChayLayer,
+    viewLoggersLayer
     // Các layer sau tạm thời không hiển thị trên bản đồ
     // duongOngNghiemThuLayer,
     // duongOngOverlayLayer
@@ -243,6 +276,34 @@ async function loadDuongOngOverlay(): Promise<number> {
 }
 
 /**
+ * Load dữ liệu Điểm chảy
+ */
+async function loadDiemChay(): Promise<number> {
+  try {
+    console.log('[Main] Loading điểm chảy...');
+    const data = await getDiemChay();
+    return loadGeoJsonToSource(diemChaySource, data, 'Điểm chảy');
+  } catch (error) {
+    console.error('[Main] Failed to load điểm chảy:', error);
+    return 0;
+  }
+}
+
+/**
+ * Load dữ liệu tín hiệu SCADA (áp lực / lưu lượng)
+ */
+async function loadViewLoggers(): Promise<number> {
+  try {
+    console.log('[Main] Loading ViewLoggers (SCADA)...');
+    const data = await geoService.getViewLoggers();
+    return loadGeoJsonToSource(viewLoggersSource, data, 'Tín hiệu áp lực SCADA');
+  } catch (error) {
+    console.error('[Main] Failed to load ViewLoggers:', error);
+    return 0;
+  }
+}
+
+/**
  * Load tất cả các layer đường ống
  * Chỉ load đường ống chính và C3, không load nghiệm thu và overlay
  */
@@ -251,7 +312,9 @@ async function loadAllDuongOngLayers(): Promise<number> {
   
   const results = await Promise.allSettled([
     loadDuongOngChinh(),
-    loadDuongOngChinhC3()
+    loadDuongOngChinhC3(),
+    loadDiemChay(),
+    loadViewLoggers()
     // Tạm thời không load các layer sau:
     // loadDuongOngNghiemThu(),
     // loadDuongOngOverlay()
@@ -277,11 +340,20 @@ function initLayerSwitcher(): void {
   const layerDuongOngC3Checkbox = document.getElementById('layer-duongong-c3') as HTMLInputElement | null;
   const layerNghiemThuCheckbox = document.getElementById('layer-nghiemthu') as HTMLInputElement | null;
   const layerOverlayCheckbox = document.getElementById('layer-overlay') as HTMLInputElement | null;
+  const layerDiemChayCheckbox = document.getElementById('layer-diemchay') as HTMLInputElement | null;
+  const layerViewLoggersCheckbox = document.getElementById('layer-viewloggers') as HTMLInputElement | null;
 
   if (layerDuongOngCheckbox) {
     layerDuongOngCheckbox.checked = duongOngChinhLayer.getVisible();
     layerDuongOngCheckbox.addEventListener('change', (e) => {
       duongOngChinhLayer.setVisible((e.target as HTMLInputElement).checked);
+    });
+  }
+
+  if (layerViewLoggersCheckbox) {
+    layerViewLoggersCheckbox.checked = viewLoggersLayer.getVisible();
+    layerViewLoggersCheckbox.addEventListener('change', (e) => {
+      viewLoggersLayer.setVisible((e.target as HTMLInputElement).checked);
     });
   }
 
@@ -303,6 +375,13 @@ function initLayerSwitcher(): void {
     layerOverlayCheckbox.checked = duongOngOverlayLayer.getVisible();
     layerOverlayCheckbox.addEventListener('change', (e) => {
       duongOngOverlayLayer.setVisible((e.target as HTMLInputElement).checked);
+    });
+  }
+
+  if (layerDiemChayCheckbox) {
+    layerDiemChayCheckbox.checked = diemChayLayer.getVisible();
+    layerDiemChayCheckbox.addEventListener('change', (e) => {
+      diemChayLayer.setVisible((e.target as HTMLInputElement).checked);
     });
   }
 }
@@ -411,7 +490,9 @@ function initFeatureHover(): void {
           return !!(title && (
             title.includes('đường ống') ||
             title.includes('Đường ống') ||
-            title.includes('nghiệm thu')
+            title.includes('nhiệm thu') ||
+            title.includes('SCADA') ||
+            title.includes('Điểm chảy')
           ));
         }
       }
@@ -422,19 +503,37 @@ function initFeatureHover(): void {
       info.style.top = pixel[1] + 10 + 'px';
 
       if (feature !== currentFeature) {
-        info.style.visibility = 'visible';
-        const layerTitle = (feature.layer?.get('title') ?? '') as string;
-        
-        if (layerTitle.includes('nghiệm thu')) {
-          const code = (feature.get('Code') ?? '') as string;
-          const noiDung = (feature.get('NoiDung') ?? '') as string;
-          info.innerText = `${code} - ${noiDung}`;
-        } else {
-          const vatLieu = (feature.get('VatLieu') ?? '') as string;
-          const duongKinh = (feature.get('DuongKinh') ?? '') as string;
-          info.innerText = `${vatLieu} Ø${duongKinh}mm`;
+          info.style.visibility = 'visible';
+          const layerTitle = (feature.layer?.get('title') ?? '') as string;
+          
+          if (layerTitle.includes('nhiệm thu')) {
+            const code = (feature.get('Code') ?? '') as string;
+            const noiDung = (feature.get('NoiDung') ?? '') as string;
+            info.innerText = `${code} - ${noiDung}`;
+          } else if (layerTitle.includes('SCADA')) {
+            const siteName = (feature.get('SiteName') ?? '') as string;
+            const apLuc = feature.get('ApLuc') as number | null;
+            const apUnit = (feature.get('ApLucUnit') ?? 'bar') as string;
+            const luuLuong = feature.get('LuuLuong') as number | null;
+            const llUnit = (feature.get('LuuLuongUnit') ?? 'm³/h') as string;
+            const timeStamp = (feature.get('TimeStamp') ?? '') as string;
+            const apStr = apLuc != null ? `Áp lực: ${apLuc.toFixed(2)} ${apUnit}` : 'Áp lực: N/A';
+            const luuStr = luuLuong != null ? ` | Lưu lượng: ${luuLuong.toFixed(2)} ${llUnit}` : '';
+            const tsStr = timeStamp ? `\n⏰ Cập nhật: ${new Date(timeStamp).toLocaleString('vi-VN')}` : '';
+            info.innerText = `📊 ${siteName}\n${apStr}${luuStr}${tsStr}`;
+          } else if (layerTitle.includes('Điểm chảy')) {
+            const diaDiem = (feature.get('DiaDiem') ?? '') as string;
+            const trangThai = (feature.get('TrangThaiXuLy') ?? '') as string;
+            const hoanThanh = (feature.get('ThoiGianHoanThanh') ?? '') as string;
+            const tsStr = hoanThanh ? `\n⏰ ${new Date(hoanThanh).toLocaleDateString('vi-VN')}` : '';
+            info.innerText = `📍 ${diaDiem}\n📊 Trạng thái: ${trangThai}${tsStr}`;
+          } else {
+            const vatLieu = (feature.get('VatLieu') ?? '') as string;
+            const duongKinh = (feature.get('DuongKinh') ?? '') as string;
+            info.innerText = `${vatLieu} Ø${duongKinh}mm`;
+          }
         }
-      }
+
     } else {
       info.style.visibility = 'hidden';
     }
@@ -459,6 +558,7 @@ function initApp(): void {
   initMapLoadingState();
   initFeatureHover();
   initZoomBasedLayerVisibility();
+  initLayerSwitcher();
   
   // Load tất cả các layer đường ống
   loadAllDuongOngLayers();
@@ -482,13 +582,17 @@ export {
   duongOngChinhC3Layer,
   duongOngNghiemThuLayer,
   duongOngOverlayLayer,
+  diemChayLayer,
+  viewLoggersLayer,
   duongOngChinhSource,
   duongOngChinhC3Source,
   duongOngNghiemThuSource,
   duongOngOverlaySource,
+  viewLoggersSource,
   loadAllDuongOngLayers,
   // Export các hàm load riêng lẻ để sử dụng khi cần
   loadDuongOngNghiemThu,
   loadDuongOngOverlay,
+  loadViewLoggers,
   initLayerSwitcher
 };

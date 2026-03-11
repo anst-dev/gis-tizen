@@ -8,6 +8,7 @@ import { LAYER_NAMES, API_ENDPOINTS } from './configService.ts';
 import type { 
   GeoJSONFeatureCollection, 
   DuongOngProperties,
+  DiemChayProperties,
   AllDuongOngLayersResult 
 } from '../types/index.ts';
 
@@ -70,6 +71,12 @@ const getDMA = (): Promise<GeoJSONResponse> =>
   getGeoJsonByLayer(LAYER_NAMES.DMA);
 
 /**
+ * Lấy dữ liệu điểm SCADA Logger (tín hiệu áp lực / lưu lượng)
+ */
+const getViewLoggers = (): Promise<GeoJSONResponse> => 
+  getGeoJsonByLayer(LAYER_NAMES.VIEW_LOGGERS);
+
+/**
  * Lấy tất cả các layer đường ống cùng lúc
  */
 async function getAllDuongOngLayers(): Promise<AllDuongOngLayersResult> {
@@ -93,6 +100,7 @@ const geoService = {
   getDongHoKhachHang,
   getVan,
   getDMA,
+  getViewLoggers,
   getAllDuongOngLayers
 };
 
@@ -106,6 +114,7 @@ export {
   getDongHoKhachHang,
   getVan,
   getDMA,
+  getViewLoggers,
   getAllDuongOngLayers
 };
 
@@ -114,3 +123,9 @@ export const LAYERS = LAYER_NAMES;
 
 // Default export
 export default geoService;
+/**
+ * Lấy dữ liệu Điểm chảy (ViewGiaoKhoans)
+ */
+export const getDiemChay = async (): Promise<GeoJSONFeatureCollection<DiemChayProperties>> => {
+    return (await getGeoJsonByLayer(LAYER_NAMES.DIEM_CHAY)) as unknown as GeoJSONFeatureCollection<DiemChayProperties>;
+};
