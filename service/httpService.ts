@@ -11,7 +11,7 @@ import axios, {
 } from 'axios';
 import qs from 'qs';
 
-const API_BASE_URL = 'https://unsupercilious-leonarda-unreaving.ngrok-free.dev';
+const API_BASE_URL = 'https://capnuocnghean.vn';
 
 const http: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

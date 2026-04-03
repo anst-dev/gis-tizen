@@ -553,13 +553,151 @@ function initFeatureHover(): void {
 /**
  * Khởi tạo tất cả các thành phần khi DOM sẵn sàng
  */
+// ============================================
+// REMOTE CONTROL (Tizen TV)
+// ============================================
+
+const TIZEN_KEY_CODES = {
+  BACK: 10009,
+  VOLUME_UP: 447,
+  VOLUME_DOWN: 448
+};
+
+const NAV_KEY_CODES = {
+  ARROW_UP: 38,
+  ARROW_DOWN: 40,
+  ARROW_LEFT: 37,
+  ARROW_RIGHT: 39,
+  ENTER: 13,
+  ESCAPE: 27
+};
+
+function initRemoteControl(map: Map): void {
+  try {
+    const tvInputDevice = (window as typeof window & { tizen?: { tvinputdevice?: { registerKey?: (key: string) => void } } }).tizen?.tvinputdevice;
+    if (tvInputDevice && typeof tvInputDevice.registerKey === 'function') {
+      ['VolumeUp', 'VolumeDown', 'MediaPlay', 'MediaPause'].forEach((key) => {
+        try {
+          tvInputDevice.registerKey(key);
+        } catch {
+          // ignore
+        }
+      });
+      console.log('[GIS] Tizen keys registered');
+    }
+  } catch {
+    // ignore
+  }
+
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
+    const keyCode = event.keyCode;
+    const view = map.getView();
+
+    if ([37, 38, 39, 40, 13, 27, 447, 448, 10009].includes(keyCode)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    switch (keyCode) {
+      case NAV_KEY_CODES.ARROW_UP:
+      case NAV_KEY_CODES.ARROW_DOWN:
+      case NAV_KEY_CODES.ARROW_LEFT:
+      case NAV_KEY_CODES.ARROW_RIGHT: {
+        const center = view.getCenter();
+        const resolution = view.getResolution();
+        if (!center || !resolution) {
+          break;
+        }
+
+        const panDistance = resolution * 100;
+        const newCenter = [...center] as [number, number];
+
+        if (keyCode === NAV_KEY_CODES.ARROW_UP) newCenter[1] += panDistance;
+        if (keyCode === NAV_KEY_CODES.ARROW_DOWN) newCenter[1] -= panDistance;
+        if (keyCode === NAV_KEY_CODES.ARROW_LEFT) newCenter[0] -= panDistance;
+        if (keyCode === NAV_KEY_CODES.ARROW_RIGHT) newCenter[0] += panDistance;
+
+        view.animate({ center: newCenter, duration: 300 });
+        break;
+      }
+
+      case TIZEN_KEY_CODES.VOLUME_UP:
+      case NAV_KEY_CODES.ENTER: {
+        const currentZoom = view.getZoom();
+        if (currentZoom !== undefined) {
+          view.animate({ zoom: currentZoom + 1, duration: 300 });
+        }
+        break;
+      }
+
+      case TIZEN_KEY_CODES.VOLUME_DOWN: {
+        const currentZoom = view.getZoom();
+        if (currentZoom !== undefined) {
+          view.animate({ zoom: currentZoom - 1, duration: 300 });
+        }
+        break;
+      }
+
+      case NAV_KEY_CODES.ESCAPE:
+      case TIZEN_KEY_CODES.BACK:
+        window.parent.postMessage({ type: 'back', source: 'gis-tizen' }, '*');
+        break;
+    }
+  });
+
+  window.addEventListener('message', (event: MessageEvent) => {
+    const data = event.data;
+    if (!data || !data.type) {
+      return;
+    }
+
+    switch (data.type) {
+      case 'pan': {
+        const direction = data.direction;
+        const view = map.getView();
+        const center = view.getCenter();
+        const resolution = view.getResolution();
+        if (!center || !resolution) {
+          break;
+        }
+
+        const panDistance = resolution * 100;
+        const newCenter = [...center] as [number, number];
+
+        if (direction === 'up') newCenter[1] += panDistance;
+        if (direction === 'down') newCenter[1] -= panDistance;
+        if (direction === 'left') newCenter[0] -= panDistance;
+        if (direction === 'right') newCenter[0] += panDistance;
+
+        view.animate({ center: newCenter, duration: 300 });
+        break;
+      }
+
+      case 'zoom': {
+        const view = map.getView();
+        const currentZoom = view.getZoom();
+        if (currentZoom !== undefined) {
+          view.animate({ zoom: currentZoom + data.step, duration: 300 });
+        }
+        break;
+      }
+    }
+  });
+
+  console.log('[GIS] Remote control initialized');
+}
+
+/**
+ * Khởi tạo tất cả các thành phần khi DOM sẵn sàng
+ */
 function initApp(): void {
   initLegendToggle();
   initMapLoadingState();
   initFeatureHover();
   initZoomBasedLayerVisibility();
   initLayerSwitcher();
-  
+  initRemoteControl(map);
+
   // Load tất cả các layer đường ống
   loadAllDuongOngLayers();
 }
