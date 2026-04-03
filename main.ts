@@ -3,30 +3,24 @@
  * Ứng dụng bản đồ GIS hiển thị hệ thống đường ống nước
  */
 
-import './style.css';
-import { Map, View } from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import VectorLayer from 'ol/layer/Vector';
-import LayerGroup from 'ol/layer/Group';
-import OSM from 'ol/source/OSM';
-import VectorSource from 'ol/source/Vector';
-import GeoJSON from 'ol/format/GeoJSON';
-import { fromLonLat } from 'ol/proj';
-import type { Feature } from 'ol';
-import type { Geometry } from 'ol/geom';
-import type BaseLayer from 'ol/layer/Base';
+import "./style.css";
+import { Map, View } from "ol";
+import TileLayer from "ol/layer/Tile";
+import VectorLayer from "ol/layer/Vector";
+import LayerGroup from "ol/layer/Group";
+import OSM from "ol/source/OSM";
+import VectorSource from "ol/source/Vector";
+import GeoJSON from "ol/format/GeoJSON";
+import { fromLonLat } from "ol/proj";
+import type { Feature } from "ol";
+import type { Geometry } from "ol/geom";
+import type BaseLayer from "ol/layer/Base";
 
 // Import services
-import geoService, { getDiemChay } from './service/geoService.ts';
-import { 
-  duongOngChinhStyleFunction, 
-  duongOngNghiemThuStyleFunction,
-  duongOngOverlayStyleFunction,
-  diemChayStyleFunction,
-  viewLoggersStyleFunction
-} from './service/styleService.ts';
-import { MAP_CONFIG, LAYER_DISPLAY_CONFIG } from './service/configService.ts';
-import type { GeoJSONFeatureCollection, DuongOngProperties, AppConfig, FeatureWithLayer } from './types/index.ts';
+import geoService, { getDiemChay } from "./service/geoService.ts";
+import { duongOngChinhStyleFunction, duongOngNghiemThuStyleFunction, duongOngOverlayStyleFunction, diemChayStyleFunction, viewLoggersStyleFunction } from "./service/styleService.ts";
+import { MAP_CONFIG, LAYER_DISPLAY_CONFIG } from "./service/configService.ts";
+import type { GeoJSONFeatureCollection, DuongOngProperties, AppConfig, FeatureWithLayer } from "./types/index.ts";
 
 // ============================================
 // CẤU HÌNH ỨNG DỤNG
@@ -37,7 +31,7 @@ const CONFIG: AppConfig = {
   DEFAULT_ZOOM: MAP_CONFIG.DEFAULT_ZOOM,
   MIN_ZOOM: MAP_CONFIG.MIN_ZOOM,
   MAX_ZOOM: MAP_CONFIG.MAX_ZOOM,
-  PROJECTION: MAP_CONFIG.PROJECTION
+  PROJECTION: MAP_CONFIG.PROJECTION,
 };
 
 // Resolution threshold để hiển thị C3 (tương đương zoom ~15)
@@ -75,10 +69,10 @@ const duongOngChinhLayer = new VectorLayer({
   source: duongOngChinhSource,
   style: duongOngChinhStyleFunction,
   properties: {
-    title: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH.title
+    title: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH.title,
   },
   visible: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH.visible,
-  zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH.zIndex
+  zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH.zIndex,
 });
 
 /**
@@ -90,10 +84,10 @@ const duongOngChinhC3Layer = new VectorLayer({
   source: duongOngChinhC3Source,
   style: duongOngChinhStyleFunction,
   properties: {
-    title: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH_C3.title
+    title: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH_C3.title,
   },
   visible: false, // Mặc định ẩn, sẽ hiển thị khi zoom gần
-  zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH_C3.zIndex
+  zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_CHINH_C3.zIndex,
 });
 
 /**
@@ -104,10 +98,10 @@ const duongOngNghiemThuLayer = new VectorLayer({
   source: duongOngNghiemThuSource,
   style: duongOngNghiemThuStyleFunction,
   properties: {
-    title: LAYER_DISPLAY_CONFIG.DUONG_ONG_NGHIEM_THU.title
+    title: LAYER_DISPLAY_CONFIG.DUONG_ONG_NGHIEM_THU.title,
   },
   visible: LAYER_DISPLAY_CONFIG.DUONG_ONG_NGHIEM_THU.visible,
-  zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_NGHIEM_THU.zIndex
+  zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_NGHIEM_THU.zIndex,
 });
 
 /**
@@ -118,10 +112,10 @@ const duongOngOverlayLayer = new VectorLayer({
   source: duongOngOverlaySource,
   style: duongOngOverlayStyleFunction,
   properties: {
-    title: LAYER_DISPLAY_CONFIG.DUONG_ONG_OVERLAY.title
+    title: LAYER_DISPLAY_CONFIG.DUONG_ONG_OVERLAY.title,
   },
   visible: LAYER_DISPLAY_CONFIG.DUONG_ONG_OVERLAY.visible,
-  zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_OVERLAY.zIndex
+  zIndex: LAYER_DISPLAY_CONFIG.DUONG_ONG_OVERLAY.zIndex,
 });
 
 /**
@@ -131,10 +125,10 @@ const diemChayLayer = new VectorLayer({
   source: diemChaySource,
   style: diemChayStyleFunction,
   properties: {
-    title: LAYER_DISPLAY_CONFIG.DIEM_CHAY.title
+    title: LAYER_DISPLAY_CONFIG.DIEM_CHAY.title,
   },
   visible: LAYER_DISPLAY_CONFIG.DIEM_CHAY.visible,
-  zIndex: LAYER_DISPLAY_CONFIG.DIEM_CHAY.zIndex
+  zIndex: LAYER_DISPLAY_CONFIG.DIEM_CHAY.zIndex,
 });
 
 /**
@@ -145,10 +139,10 @@ const viewLoggersLayer = new VectorLayer({
   source: viewLoggersSource,
   style: viewLoggersStyleFunction,
   properties: {
-    title: LAYER_DISPLAY_CONFIG.VIEW_LOGGERS.title
+    title: LAYER_DISPLAY_CONFIG.VIEW_LOGGERS.title,
   },
   visible: LAYER_DISPLAY_CONFIG.VIEW_LOGGERS.visible,
-  zIndex: LAYER_DISPLAY_CONFIG.VIEW_LOGGERS.zIndex
+  zIndex: LAYER_DISPLAY_CONFIG.VIEW_LOGGERS.zIndex,
 });
 
 // ============================================
@@ -156,27 +150,27 @@ const viewLoggersLayer = new VectorLayer({
 // ============================================
 
 const baseLayers = new LayerGroup({
-  properties: { title: 'Bản đồ nền' },
+  properties: { title: "Bản đồ nền" },
   layers: [
     new TileLayer({
       source: new OSM(),
-      properties: { title: 'OpenStreetMap', type: 'base' },
-      visible: true
-    })
-  ]
+      properties: { title: "OpenStreetMap", type: "base" },
+      visible: true,
+    }),
+  ],
 });
 
 const overlayLayers = new LayerGroup({
-  properties: { title: 'Lớp đường ống' },
+  properties: { title: "Lớp đường ống" },
   layers: [
     duongOngChinhLayer,
     duongOngChinhC3Layer,
     diemChayLayer,
-    viewLoggersLayer
+    viewLoggersLayer,
     // Các layer sau tạm thời không hiển thị trên bản đồ
     // duongOngNghiemThuLayer,
     // duongOngOverlayLayer
-  ]
+  ],
 });
 
 // ============================================
@@ -184,14 +178,14 @@ const overlayLayers = new LayerGroup({
 // ============================================
 
 const map = new Map({
-  target: 'map',
+  target: "map",
   layers: [baseLayers, overlayLayers],
   view: new View({
     center: fromLonLat(CONFIG.DEFAULT_CENTER),
     zoom: CONFIG.DEFAULT_ZOOM,
     minZoom: CONFIG.MIN_ZOOM,
-    maxZoom: CONFIG.MAX_ZOOM
-  })
+    maxZoom: CONFIG.MAX_ZOOM,
+  }),
 });
 
 // ============================================
@@ -201,14 +195,10 @@ const map = new Map({
 /**
  * Load dữ liệu GeoJSON vào source
  */
-function loadGeoJsonToSource(
-  source: VectorSource<Feature<Geometry>>, 
-  geoJsonData: GeoJSONFeatureCollection<DuongOngProperties>, 
-  layerName: string
-): number {
+function loadGeoJsonToSource(source: VectorSource<Feature<Geometry>>, geoJsonData: GeoJSONFeatureCollection<DuongOngProperties>, layerName: string): number {
   try {
     const features = new GeoJSON().readFeatures(geoJsonData, {
-      featureProjection: 'EPSG:3857'
+      featureProjection: "EPSG:3857",
     }) as Feature<Geometry>[];
     source.addFeatures(features);
     console.log(`[Main] Loaded ${features.length} features for ${layerName}`);
@@ -224,11 +214,11 @@ function loadGeoJsonToSource(
  */
 async function loadDuongOngChinh(): Promise<number> {
   try {
-    console.log('[Main] Loading đường ống chính...');
+    console.log("[Main] Loading đường ống chính...");
     const data = await geoService.getDuongOngChinh();
-    return loadGeoJsonToSource(duongOngChinhSource, data, 'Đường ống chính');
+    return loadGeoJsonToSource(duongOngChinhSource, data, "Đường ống chính");
   } catch (error) {
-    console.error('[Main] Failed to load đường ống chính:', error);
+    console.error("[Main] Failed to load đường ống chính:", error);
     return 0;
   }
 }
@@ -238,11 +228,11 @@ async function loadDuongOngChinh(): Promise<number> {
  */
 async function loadDuongOngChinhC3(): Promise<number> {
   try {
-    console.log('[Main] Loading đường ống chính C3...');
+    console.log("[Main] Loading đường ống chính C3...");
     const data = await geoService.getDuongOngChinhC3();
-    return loadGeoJsonToSource(duongOngChinhC3Source, data, 'Đường ống C3');
+    return loadGeoJsonToSource(duongOngChinhC3Source, data, "Đường ống C3");
   } catch (error) {
-    console.error('[Main] Failed to load đường ống chính C3:', error);
+    console.error("[Main] Failed to load đường ống chính C3:", error);
     return 0;
   }
 }
@@ -252,11 +242,11 @@ async function loadDuongOngChinhC3(): Promise<number> {
  */
 async function loadDuongOngNghiemThu(): Promise<number> {
   try {
-    console.log('[Main] Loading đường ống nghiệm thu...');
+    console.log("[Main] Loading đường ống nghiệm thu...");
     const data = await geoService.getDuongOngNghiemThu();
-    return loadGeoJsonToSource(duongOngNghiemThuSource, data, 'Đường ống nghiệm thu');
+    return loadGeoJsonToSource(duongOngNghiemThuSource, data, "Đường ống nghiệm thu");
   } catch (error) {
-    console.error('[Main] Failed to load đường ống nghiệm thu:', error);
+    console.error("[Main] Failed to load đường ống nghiệm thu:", error);
     return 0;
   }
 }
@@ -266,11 +256,11 @@ async function loadDuongOngNghiemThu(): Promise<number> {
  */
 async function loadDuongOngOverlay(): Promise<number> {
   try {
-    console.log('[Main] Loading đường ống overlay...');
+    console.log("[Main] Loading đường ống overlay...");
     const data = await geoService.getDuongOngOverlay();
-    return loadGeoJsonToSource(duongOngOverlaySource, data, 'Đường ống overlay');
+    return loadGeoJsonToSource(duongOngOverlaySource, data, "Đường ống overlay");
   } catch (error) {
-    console.error('[Main] Failed to load đường ống overlay:', error);
+    console.error("[Main] Failed to load đường ống overlay:", error);
     return 0;
   }
 }
@@ -280,11 +270,11 @@ async function loadDuongOngOverlay(): Promise<number> {
  */
 async function loadDiemChay(): Promise<number> {
   try {
-    console.log('[Main] Loading điểm chảy...');
+    console.log("[Main] Loading điểm chảy...");
     const data = await getDiemChay();
-    return loadGeoJsonToSource(diemChaySource, data, 'Điểm chảy');
+    return loadGeoJsonToSource(diemChaySource, data, "Điểm chảy");
   } catch (error) {
-    console.error('[Main] Failed to load điểm chảy:', error);
+    console.error("[Main] Failed to load điểm chảy:", error);
     return 0;
   }
 }
@@ -294,11 +284,11 @@ async function loadDiemChay(): Promise<number> {
  */
 async function loadViewLoggers(): Promise<number> {
   try {
-    console.log('[Main] Loading ViewLoggers (SCADA)...');
+    console.log("[Main] Loading ViewLoggers (SCADA)...");
     const data = await geoService.getViewLoggers();
-    return loadGeoJsonToSource(viewLoggersSource, data, 'Tín hiệu áp lực SCADA');
+    return loadGeoJsonToSource(viewLoggersSource, data, "Tín hiệu áp lực SCADA");
   } catch (error) {
-    console.error('[Main] Failed to load ViewLoggers:', error);
+    console.error("[Main] Failed to load ViewLoggers:", error);
     return 0;
   }
 }
@@ -308,22 +298,20 @@ async function loadViewLoggers(): Promise<number> {
  * Chỉ load đường ống chính và C3, không load nghiệm thu và overlay
  */
 async function loadAllDuongOngLayers(): Promise<number> {
-  console.log('[Main] Starting to load đường ống layers...');
-  
+  console.log("[Main] Starting to load đường ống layers...");
+
   const results = await Promise.allSettled([
     loadDuongOngChinh(),
     loadDuongOngChinhC3(),
     loadDiemChay(),
-    loadViewLoggers()
+    loadViewLoggers(),
     // Tạm thời không load các layer sau:
     // loadDuongOngNghiemThu(),
     // loadDuongOngOverlay()
   ]);
-  
-  const totalFeatures = results
-    .filter((r): r is PromiseFulfilledResult<number> => r.status === 'fulfilled')
-    .reduce((sum, r) => sum + r.value, 0);
-  
+
+  const totalFeatures = results.filter((r): r is PromiseFulfilledResult<number> => r.status === "fulfilled").reduce((sum, r) => sum + r.value, 0);
+
   console.log(`[Main] Finished loading layers. Total features: ${totalFeatures}`);
   return totalFeatures;
 }
@@ -336,51 +324,51 @@ async function loadAllDuongOngLayers(): Promise<number> {
  * Khởi tạo layer switcher
  */
 function initLayerSwitcher(): void {
-  const layerDuongOngCheckbox = document.getElementById('layer-duongong') as HTMLInputElement | null;
-  const layerDuongOngC3Checkbox = document.getElementById('layer-duongong-c3') as HTMLInputElement | null;
-  const layerNghiemThuCheckbox = document.getElementById('layer-nghiemthu') as HTMLInputElement | null;
-  const layerOverlayCheckbox = document.getElementById('layer-overlay') as HTMLInputElement | null;
-  const layerDiemChayCheckbox = document.getElementById('layer-diemchay') as HTMLInputElement | null;
-  const layerViewLoggersCheckbox = document.getElementById('layer-viewloggers') as HTMLInputElement | null;
+  const layerDuongOngCheckbox = document.getElementById("layer-duongong") as HTMLInputElement | null;
+  const layerDuongOngC3Checkbox = document.getElementById("layer-duongong-c3") as HTMLInputElement | null;
+  const layerNghiemThuCheckbox = document.getElementById("layer-nghiemthu") as HTMLInputElement | null;
+  const layerOverlayCheckbox = document.getElementById("layer-overlay") as HTMLInputElement | null;
+  const layerDiemChayCheckbox = document.getElementById("layer-diemchay") as HTMLInputElement | null;
+  const layerViewLoggersCheckbox = document.getElementById("layer-viewloggers") as HTMLInputElement | null;
 
   if (layerDuongOngCheckbox) {
     layerDuongOngCheckbox.checked = duongOngChinhLayer.getVisible();
-    layerDuongOngCheckbox.addEventListener('change', (e) => {
+    layerDuongOngCheckbox.addEventListener("change", (e) => {
       duongOngChinhLayer.setVisible((e.target as HTMLInputElement).checked);
     });
   }
 
   if (layerViewLoggersCheckbox) {
     layerViewLoggersCheckbox.checked = viewLoggersLayer.getVisible();
-    layerViewLoggersCheckbox.addEventListener('change', (e) => {
+    layerViewLoggersCheckbox.addEventListener("change", (e) => {
       viewLoggersLayer.setVisible((e.target as HTMLInputElement).checked);
     });
   }
 
   if (layerDuongOngC3Checkbox) {
     layerDuongOngC3Checkbox.checked = duongOngChinhC3Layer.getVisible();
-    layerDuongOngC3Checkbox.addEventListener('change', (e) => {
+    layerDuongOngC3Checkbox.addEventListener("change", (e) => {
       duongOngChinhC3Layer.setVisible((e.target as HTMLInputElement).checked);
     });
   }
 
   if (layerNghiemThuCheckbox) {
     layerNghiemThuCheckbox.checked = duongOngNghiemThuLayer.getVisible();
-    layerNghiemThuCheckbox.addEventListener('change', (e) => {
+    layerNghiemThuCheckbox.addEventListener("change", (e) => {
       duongOngNghiemThuLayer.setVisible((e.target as HTMLInputElement).checked);
     });
   }
 
   if (layerOverlayCheckbox) {
     layerOverlayCheckbox.checked = duongOngOverlayLayer.getVisible();
-    layerOverlayCheckbox.addEventListener('change', (e) => {
+    layerOverlayCheckbox.addEventListener("change", (e) => {
       duongOngOverlayLayer.setVisible((e.target as HTMLInputElement).checked);
     });
   }
 
   if (layerDiemChayCheckbox) {
     layerDiemChayCheckbox.checked = diemChayLayer.getVisible();
-    layerDiemChayCheckbox.addEventListener('change', (e) => {
+    layerDiemChayCheckbox.addEventListener("change", (e) => {
       diemChayLayer.setVisible((e.target as HTMLInputElement).checked);
     });
   }
@@ -394,16 +382,16 @@ function initLayerSwitcher(): void {
  * Xử lý toggle legend (thu gọn/mở rộng bảng chú thích)
  */
 function initLegendToggle(): void {
-  const legendToggleBtn = document.getElementById('legend-toggle');
-  const legendContent = document.getElementById('legend-content');
-  const legend = document.getElementById('legend');
+  const legendToggleBtn = document.getElementById("legend-toggle");
+  const legendContent = document.getElementById("legend-content");
+  const legend = document.getElementById("legend");
 
   if (legendToggleBtn && legendContent && legend) {
-    legendToggleBtn.addEventListener('click', () => {
-      const isCollapsed = legendContent.classList.toggle('collapsed');
-      legend.classList.toggle('collapsed', isCollapsed);
-      legendToggleBtn.textContent = isCollapsed ? '+' : '−';
-      legendToggleBtn.title = isCollapsed ? 'Mở rộng' : 'Thu gọn';
+    legendToggleBtn.addEventListener("click", () => {
+      const isCollapsed = legendContent.classList.toggle("collapsed");
+      legend.classList.toggle("collapsed", isCollapsed);
+      legendToggleBtn.textContent = isCollapsed ? "+" : "−";
+      legendToggleBtn.title = isCollapsed ? "Mở rộng" : "Thu gọn";
     });
   }
 }
@@ -418,23 +406,23 @@ function initLegendToggle(): void {
  */
 function initZoomBasedLayerVisibility(): void {
   const view = map.getView();
-  
+
   // Kiểm tra và cập nhật visibility ngay khi khởi tạo
   const updateC3Visibility = (): void => {
     const resolution = view.getResolution();
     if (resolution === undefined) return;
-    
+
     const shouldShowC3 = resolution <= C3_DISPLAY_RESOLUTION;
-    
+
     if (duongOngChinhC3Layer.getVisible() !== shouldShowC3) {
       duongOngChinhC3Layer.setVisible(shouldShowC3);
       console.log(`[Main] C3 layer visibility: ${shouldShowC3} (resolution: ${resolution.toFixed(2)})`);
     }
   };
-  
+
   // Lắng nghe sự kiện thay đổi resolution
-  view.on('change:resolution', updateC3Visibility);
-  
+  view.on("change:resolution", updateC3Visibility);
+
   // Kiểm tra ngay khi khởi tạo
   updateC3Visibility();
 }
@@ -447,12 +435,12 @@ function initZoomBasedLayerVisibility(): void {
  * Xử lý loading state của map
  */
 function initMapLoadingState(): void {
-  map.on('loadstart', () => {
-    map.getTargetElement()?.classList.add('loading');
+  map.on("loadstart", () => {
+    map.getTargetElement()?.classList.add("loading");
   });
 
-  map.on('loadend', () => {
-    map.getTargetElement()?.classList.remove('loading');
+  map.on("loadend", () => {
+    map.getTargetElement()?.classList.remove("loading");
   });
 }
 
@@ -464,14 +452,14 @@ function initMapLoadingState(): void {
  * Hiển thị thông tin feature khi hover
  */
 function initFeatureHover(): void {
-  const info = document.getElementById('info');
+  const info = document.getElementById("info");
   if (!info) return;
 
   let currentFeature: FeatureWithLayer | null = null;
 
-  map.on('pointermove', (evt) => {
+  map.on("pointermove", (evt) => {
     if (evt.dragging) {
-      info.style.visibility = 'hidden';
+      info.style.visibility = "hidden";
       currentFeature = null;
       return;
     }
@@ -486,63 +474,56 @@ function initFeatureHover(): void {
       },
       {
         layerFilter: (layer: BaseLayer) => {
-          const title = layer.get('title') as string | undefined;
-          return !!(title && (
-            title.includes('đường ống') ||
-            title.includes('Đường ống') ||
-            title.includes('nhiệm thu') ||
-            title.includes('SCADA') ||
-            title.includes('Điểm chảy')
-          ));
-        }
-      }
+          const title = layer.get("title") as string | undefined;
+          return !!(title && (title.includes("đường ống") || title.includes("Đường ống") || title.includes("nhiệm thu") || title.includes("SCADA") || title.includes("Điểm chảy")));
+        },
+      },
     );
 
     if (feature) {
-      info.style.left = pixel[0] + 10 + 'px';
-      info.style.top = pixel[1] + 10 + 'px';
+      info.style.left = pixel[0] + 10 + "px";
+      info.style.top = pixel[1] + 10 + "px";
 
       if (feature !== currentFeature) {
-          info.style.visibility = 'visible';
-          const layerTitle = (feature.layer?.get('title') ?? '') as string;
-          
-          if (layerTitle.includes('nhiệm thu')) {
-            const code = (feature.get('Code') ?? '') as string;
-            const noiDung = (feature.get('NoiDung') ?? '') as string;
-            info.innerText = `${code} - ${noiDung}`;
-          } else if (layerTitle.includes('SCADA')) {
-            const siteName = (feature.get('SiteName') ?? '') as string;
-            const apLuc = feature.get('ApLuc') as number | null;
-            const apUnit = (feature.get('ApLucUnit') ?? 'bar') as string;
-            const luuLuong = feature.get('LuuLuong') as number | null;
-            const llUnit = (feature.get('LuuLuongUnit') ?? 'm³/h') as string;
-            const timeStamp = (feature.get('TimeStamp') ?? '') as string;
-            const apStr = apLuc != null ? `Áp lực: ${apLuc.toFixed(2)} ${apUnit}` : 'Áp lực: N/A';
-            const luuStr = luuLuong != null ? ` | Lưu lượng: ${luuLuong.toFixed(2)} ${llUnit}` : '';
-            const tsStr = timeStamp ? `\n⏰ Cập nhật: ${new Date(timeStamp).toLocaleString('vi-VN')}` : '';
-            info.innerText = `📊 ${siteName}\n${apStr}${luuStr}${tsStr}`;
-          } else if (layerTitle.includes('Điểm chảy')) {
-            const diaDiem = (feature.get('DiaDiem') ?? '') as string;
-            const trangThai = (feature.get('TrangThaiXuLy') ?? '') as string;
-            const hoanThanh = (feature.get('ThoiGianHoanThanh') ?? '') as string;
-            const tsStr = hoanThanh ? `\n⏰ ${new Date(hoanThanh).toLocaleDateString('vi-VN')}` : '';
-            info.innerText = `📍 ${diaDiem}\n📊 Trạng thái: ${trangThai}${tsStr}`;
-          } else {
-            const vatLieu = (feature.get('VatLieu') ?? '') as string;
-            const duongKinh = (feature.get('DuongKinh') ?? '') as string;
-            info.innerText = `${vatLieu} Ø${duongKinh}mm`;
-          }
-        }
+        info.style.visibility = "visible";
+        const layerTitle = (feature.layer?.get("title") ?? "") as string;
 
+        if (layerTitle.includes("nhiệm thu")) {
+          const code = (feature.get("Code") ?? "") as string;
+          const noiDung = (feature.get("NoiDung") ?? "") as string;
+          info.innerText = `${code} - ${noiDung}`;
+        } else if (layerTitle.includes("SCADA")) {
+          const siteName = (feature.get("SiteName") ?? "") as string;
+          const apLuc = feature.get("ApLuc") as number | null;
+          const apUnit = (feature.get("ApLucUnit") ?? "bar") as string;
+          const luuLuong = feature.get("LuuLuong") as number | null;
+          const llUnit = (feature.get("LuuLuongUnit") ?? "m³/h") as string;
+          const timeStamp = (feature.get("TimeStamp") ?? "") as string;
+          const apStr = apLuc != null ? `Áp lực: ${apLuc.toFixed(2)} ${apUnit}` : "Áp lực: N/A";
+          const luuStr = luuLuong != null ? ` | Lưu lượng: ${luuLuong.toFixed(2)} ${llUnit}` : "";
+          const tsStr = timeStamp ? `\n⏰ Cập nhật: ${new Date(timeStamp).toLocaleString("vi-VN")}` : "";
+          info.innerText = `📊 ${siteName}\n${apStr}${luuStr}${tsStr}`;
+        } else if (layerTitle.includes("Điểm chảy")) {
+          const diaDiem = (feature.get("DiaDiem") ?? "") as string;
+          const trangThai = (feature.get("TrangThaiXuLy") ?? "") as string;
+          const hoanThanh = (feature.get("ThoiGianHoanThanh") ?? "") as string;
+          const tsStr = hoanThanh ? `\n⏰ ${new Date(hoanThanh).toLocaleDateString("vi-VN")}` : "";
+          info.innerText = `📍 ${diaDiem}\n📊 Trạng thái: ${trangThai}${tsStr}`;
+        } else {
+          const vatLieu = (feature.get("VatLieu") ?? "") as string;
+          const duongKinh = (feature.get("DuongKinh") ?? "") as string;
+          info.innerText = `${vatLieu} Ø${duongKinh}mm`;
+        }
+      }
     } else {
-      info.style.visibility = 'hidden';
+      info.style.visibility = "hidden";
     }
     currentFeature = feature ?? null;
   });
 
-  map.getTargetElement()?.addEventListener('pointerleave', () => {
+  map.getTargetElement()?.addEventListener("pointerleave", () => {
     currentFeature = null;
-    info.style.visibility = 'hidden';
+    info.style.visibility = "hidden";
   });
 }
 
@@ -560,7 +541,7 @@ function initFeatureHover(): void {
 const TIZEN_KEY_CODES = {
   BACK: 10009,
   VOLUME_UP: 447,
-  VOLUME_DOWN: 448
+  VOLUME_DOWN: 448,
 };
 
 const NAV_KEY_CODES = {
@@ -569,26 +550,27 @@ const NAV_KEY_CODES = {
   ARROW_LEFT: 37,
   ARROW_RIGHT: 39,
   ENTER: 13,
-  ESCAPE: 27
+  ESCAPE: 27,
 };
 
 const EXTRA_VOLUME_KEY_CODES = {
   VOLUME_UP: 175,
-  VOLUME_DOWN: 174
+  VOLUME_DOWN: 174,
 };
 
 function initRemoteControl(map: Map): void {
   try {
     const tvInputDevice = (window as typeof window & { tizen?: { tvinputdevice?: { registerKey?: (key: string) => void } } }).tizen?.tvinputdevice;
-    if (tvInputDevice && typeof tvInputDevice.registerKey === 'function') {
-      ['VolumeUp', 'VolumeDown'].forEach((key) => {
+    const registerKey = tvInputDevice?.registerKey;
+    if (typeof registerKey === "function") {
+      ["VolumeUp", "VolumeDown"].forEach((key) => {
         try {
-          tvInputDevice.registerKey(key);
+          registerKey(key);
         } catch {
           // ignore
         }
       });
-      console.log('[GIS] Tizen keys registered');
+      console.log("[GIS] Tizen keys registered");
     }
   } catch {
     // ignore
@@ -602,7 +584,7 @@ function initRemoteControl(map: Map): void {
     }
   };
 
-  const handlePan = (direction: 'up' | 'down' | 'left' | 'right'): void => {
+  const handlePan = (direction: "up" | "down" | "left" | "right"): void => {
     const view = map.getView();
     const center = view.getCenter();
     const resolution = view.getResolution();
@@ -613,10 +595,10 @@ function initRemoteControl(map: Map): void {
     const panDistance = resolution * 100;
     const newCenter = [...center] as [number, number];
 
-    if (direction === 'up') newCenter[1] += panDistance;
-    if (direction === 'down') newCenter[1] -= panDistance;
-    if (direction === 'left') newCenter[0] -= panDistance;
-    if (direction === 'right') newCenter[0] += panDistance;
+    if (direction === "up") newCenter[1] += panDistance;
+    if (direction === "down") newCenter[1] -= panDistance;
+    if (direction === "left") newCenter[0] -= panDistance;
+    if (direction === "right") newCenter[0] += panDistance;
 
     view.animate({ center: newCenter, duration: 300 });
   };
@@ -624,16 +606,16 @@ function initRemoteControl(map: Map): void {
   const handleRemoteKey = (keyCode: number, keyName?: string): void => {
     switch (keyCode) {
       case NAV_KEY_CODES.ARROW_UP:
-        handlePan('up');
+        handlePan("up");
         break;
       case NAV_KEY_CODES.ARROW_DOWN:
-        handlePan('down');
+        handlePan("down");
         break;
       case NAV_KEY_CODES.ARROW_LEFT:
-        handlePan('left');
+        handlePan("left");
         break;
       case NAV_KEY_CODES.ARROW_RIGHT:
-        handlePan('right');
+        handlePan("right");
         break;
       case TIZEN_KEY_CODES.VOLUME_UP:
       case EXTRA_VOLUME_KEY_CODES.VOLUME_UP:
@@ -648,20 +630,20 @@ function initRemoteControl(map: Map): void {
         break;
       case NAV_KEY_CODES.ESCAPE:
       case TIZEN_KEY_CODES.BACK:
-        window.parent.postMessage({ type: 'back', source: 'gis-tizen' }, '*');
+        window.parent.postMessage({ type: "back", source: "gis-tizen" }, "*");
         break;
       default:
-        if (keyName === 'VolumeUp' || keyName === 'AudioVolumeUp') {
+        if (keyName === "VolumeUp" || keyName === "AudioVolumeUp") {
           handleZoom(1);
         }
-        if (keyName === 'VolumeDown' || keyName === 'AudioVolumeDown') {
+        if (keyName === "VolumeDown" || keyName === "AudioVolumeDown") {
           handleZoom(-1);
         }
         break;
     }
   };
 
-  document.addEventListener('keydown', (event: KeyboardEvent) => {
+  document.addEventListener("keydown", (event: KeyboardEvent) => {
     const keyCode = event.keyCode;
     const keyName = event.key;
 
@@ -673,54 +655,51 @@ function initRemoteControl(map: Map): void {
     handleRemoteKey(keyCode, keyName);
   });
 
-  document.addEventListener('tizenhwkey', ((event: Event) => {
+  document.addEventListener("tizenhwkey", ((event: Event) => {
     const hwEvent = event as Event & { keyName?: string };
     const keyName = hwEvent.keyName;
 
     event.preventDefault();
 
-    if (keyName === 'VolumeUp') {
+    if (keyName === "VolumeUp") {
       handleRemoteKey(TIZEN_KEY_CODES.VOLUME_UP, keyName);
       return;
     }
 
-    if (keyName === 'VolumeDown') {
+    if (keyName === "VolumeDown") {
       handleRemoteKey(TIZEN_KEY_CODES.VOLUME_DOWN, keyName);
       return;
     }
 
-    if (keyName === 'back') {
+    if (keyName === "back") {
       handleRemoteKey(TIZEN_KEY_CODES.BACK, keyName);
     }
   }) as EventListener);
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
       window.focus();
     }
   });
 
   window.focus();
 
-  document.addEventListener('click', () => {
+  document.addEventListener("click", () => {
     window.focus();
   });
 
-  document.addEventListener('keydown', () => {
+  document.addEventListener("keydown", () => {
     window.focus();
   });
 
-  console.log('[GIS] Remote control initialized');
-}
-
-  window.addEventListener('message', (event: MessageEvent) => {
+  window.addEventListener("message", (event: MessageEvent) => {
     const data = event.data;
     if (!data || !data.type) {
       return;
     }
 
     switch (data.type) {
-      case 'pan': {
+      case "pan": {
         const direction = data.direction;
         const view = map.getView();
         const center = view.getCenter();
@@ -732,16 +711,16 @@ function initRemoteControl(map: Map): void {
         const panDistance = resolution * 100;
         const newCenter = [...center] as [number, number];
 
-        if (direction === 'up') newCenter[1] += panDistance;
-        if (direction === 'down') newCenter[1] -= panDistance;
-        if (direction === 'left') newCenter[0] -= panDistance;
-        if (direction === 'right') newCenter[0] += panDistance;
+        if (direction === "up") newCenter[1] += panDistance;
+        if (direction === "down") newCenter[1] -= panDistance;
+        if (direction === "left") newCenter[0] -= panDistance;
+        if (direction === "right") newCenter[0] += panDistance;
 
         view.animate({ center: newCenter, duration: 300 });
         break;
       }
 
-      case 'zoom': {
+      case "zoom": {
         const view = map.getView();
         const currentZoom = view.getZoom();
         if (currentZoom !== undefined) {
@@ -752,7 +731,7 @@ function initRemoteControl(map: Map): void {
     }
   });
 
-  console.log('[GIS] Remote control initialized');
+  console.log("[GIS] Remote control initialized");
 }
 
 /**
@@ -771,8 +750,8 @@ function initApp(): void {
 }
 
 // Khởi tạo khi DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
 } else {
   initApp();
 }
@@ -800,5 +779,5 @@ export {
   loadDuongOngNghiemThu,
   loadDuongOngOverlay,
   loadViewLoggers,
-  initLayerSwitcher
+  initLayerSwitcher,
 };
