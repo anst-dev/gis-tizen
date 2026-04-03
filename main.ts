@@ -572,11 +572,16 @@ const NAV_KEY_CODES = {
   ESCAPE: 27
 };
 
+const EXTRA_VOLUME_KEY_CODES = {
+  VOLUME_UP: 175,
+  VOLUME_DOWN: 174
+};
+
 function initRemoteControl(map: Map): void {
   try {
     const tvInputDevice = (window as typeof window & { tizen?: { tvinputdevice?: { registerKey?: (key: string) => void } } }).tizen?.tvinputdevice;
     if (tvInputDevice && typeof tvInputDevice.registerKey === 'function') {
-      ['VolumeUp', 'VolumeDown', 'MediaPlay', 'MediaPause'].forEach((key) => {
+      ['VolumeUp', 'VolumeDown'].forEach((key) => {
         try {
           tvInputDevice.registerKey(key);
         } catch {
@@ -589,61 +594,124 @@ function initRemoteControl(map: Map): void {
     // ignore
   }
 
-  document.addEventListener('keydown', (event: KeyboardEvent) => {
-    const keyCode = event.keyCode;
+  const handleZoom = (step: number): void => {
     const view = map.getView();
+    const currentZoom = view.getZoom();
+    if (currentZoom !== undefined) {
+      view.animate({ zoom: currentZoom + step, duration: 300 });
+    }
+  };
 
-    if ([37, 38, 39, 40, 13, 27, 447, 448, 10009].includes(keyCode)) {
-      event.preventDefault();
-      event.stopPropagation();
+  const handlePan = (direction: 'up' | 'down' | 'left' | 'right'): void => {
+    const view = map.getView();
+    const center = view.getCenter();
+    const resolution = view.getResolution();
+    if (!center || !resolution) {
+      return;
     }
 
+    const panDistance = resolution * 100;
+    const newCenter = [...center] as [number, number];
+
+    if (direction === 'up') newCenter[1] += panDistance;
+    if (direction === 'down') newCenter[1] -= panDistance;
+    if (direction === 'left') newCenter[0] -= panDistance;
+    if (direction === 'right') newCenter[0] += panDistance;
+
+    view.animate({ center: newCenter, duration: 300 });
+  };
+
+  const handleRemoteKey = (keyCode: number, keyName?: string): void => {
     switch (keyCode) {
       case NAV_KEY_CODES.ARROW_UP:
+        handlePan('up');
+        break;
       case NAV_KEY_CODES.ARROW_DOWN:
+        handlePan('down');
+        break;
       case NAV_KEY_CODES.ARROW_LEFT:
-      case NAV_KEY_CODES.ARROW_RIGHT: {
-        const center = view.getCenter();
-        const resolution = view.getResolution();
-        if (!center || !resolution) {
-          break;
-        }
-
-        const panDistance = resolution * 100;
-        const newCenter = [...center] as [number, number];
-
-        if (keyCode === NAV_KEY_CODES.ARROW_UP) newCenter[1] += panDistance;
-        if (keyCode === NAV_KEY_CODES.ARROW_DOWN) newCenter[1] -= panDistance;
-        if (keyCode === NAV_KEY_CODES.ARROW_LEFT) newCenter[0] -= panDistance;
-        if (keyCode === NAV_KEY_CODES.ARROW_RIGHT) newCenter[0] += panDistance;
-
-        view.animate({ center: newCenter, duration: 300 });
+        handlePan('left');
         break;
-      }
-
+      case NAV_KEY_CODES.ARROW_RIGHT:
+        handlePan('right');
+        break;
       case TIZEN_KEY_CODES.VOLUME_UP:
-      case NAV_KEY_CODES.ENTER: {
-        const currentZoom = view.getZoom();
-        if (currentZoom !== undefined) {
-          view.animate({ zoom: currentZoom + 1, duration: 300 });
-        }
+      case EXTRA_VOLUME_KEY_CODES.VOLUME_UP:
+        handleZoom(1);
         break;
-      }
-
-      case TIZEN_KEY_CODES.VOLUME_DOWN: {
-        const currentZoom = view.getZoom();
-        if (currentZoom !== undefined) {
-          view.animate({ zoom: currentZoom - 1, duration: 300 });
-        }
+      case TIZEN_KEY_CODES.VOLUME_DOWN:
+      case EXTRA_VOLUME_KEY_CODES.VOLUME_DOWN:
+        handleZoom(-1);
         break;
-      }
-
+      case NAV_KEY_CODES.ENTER:
+        handleZoom(1);
+        break;
       case NAV_KEY_CODES.ESCAPE:
       case TIZEN_KEY_CODES.BACK:
         window.parent.postMessage({ type: 'back', source: 'gis-tizen' }, '*');
         break;
+      default:
+        if (keyName === 'VolumeUp' || keyName === 'AudioVolumeUp') {
+          handleZoom(1);
+        }
+        if (keyName === 'VolumeDown' || keyName === 'AudioVolumeDown') {
+          handleZoom(-1);
+        }
+        break;
+    }
+  };
+
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
+    const keyCode = event.keyCode;
+    const keyName = event.key;
+
+    if ([37, 38, 39, 40, 13, 27, 174, 175, 447, 448, 10009].includes(keyCode)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    handleRemoteKey(keyCode, keyName);
+  });
+
+  document.addEventListener('tizenhwkey', ((event: Event) => {
+    const hwEvent = event as Event & { keyName?: string };
+    const keyName = hwEvent.keyName;
+
+    event.preventDefault();
+
+    if (keyName === 'VolumeUp') {
+      handleRemoteKey(TIZEN_KEY_CODES.VOLUME_UP, keyName);
+      return;
+    }
+
+    if (keyName === 'VolumeDown') {
+      handleRemoteKey(TIZEN_KEY_CODES.VOLUME_DOWN, keyName);
+      return;
+    }
+
+    if (keyName === 'back') {
+      handleRemoteKey(TIZEN_KEY_CODES.BACK, keyName);
+    }
+  }) as EventListener);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      window.focus();
     }
   });
+
+  window.focus();
+
+  document.addEventListener('click', () => {
+    window.focus();
+  });
+
+  document.addEventListener('keydown', () => {
+    window.focus();
+  });
+
+  console.log('[GIS] Remote control initialized');
+}
 
   window.addEventListener('message', (event: MessageEvent) => {
     const data = event.data;
